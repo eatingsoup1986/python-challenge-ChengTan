@@ -53,3 +53,17 @@ with open(pybank_csv, 'r') as csvfile:
     print(f"Average Change: ${average_change}")
     print(f"Greatest Increase in Profits: {max_month} (${max_change})")
     print(f"Greatest Decrease in Profits: {min_month} (${min_change})")
+
+# save summary output to txt file
+# reference for future instructions: 
+# https://www.pythontutorial.net/python-basics/python-write-text-file/
+save_file = pybank_csv.strip(".csv") + "_analysis.txt"
+filepath = os.path.join(".", save_file)
+with open(filepath,'w') as f:
+    f.write("Financial Analysis" + "\n")
+    f.write("---------------------------" + "\n")
+    f.write(f"Total Months: {total_months}" + "\n")
+    f.write("Total: $" + str(total_revenue) + "\n")
+    f.write(f"Average Change: ${average_change}" + "\n")
+    f.write(f"Greatest Increase in Profits: {max_month} (${max_change})" + "\n")
+    f.write(f"Greatest Decrease in Profits: {min_month} (${min_change})" + "\n")
