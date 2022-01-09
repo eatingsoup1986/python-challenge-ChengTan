@@ -1,16 +1,55 @@
 import os
 import csv
 
+#path to collect the data
 pybank_csv = os.path.join("Resources", "budget_data.csv")
 
-#open CSV file
-with open(pybank_csv) as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter=",")
 
-    #read the header row first
-    csv_header = next(csv_file)
-    print(f"Header: {csv_header}")
+#track variables and parameters
+total_months = 0
+revenue = 0
+last_revenue = 0
+revenue_change = 0
+revenue_changes = []
+months = []
+average_change = []
+greatest_increase = ["", 0]
+greatest_decrease = ["", 99999999999999999999]
+total_revenue = 0
+
+#read in the CSV file
+with open(pybank_csv, 'r') as csvfile:
+    #split data with commas
+    csvreader = csv.reader(csvfile, delimiter=',')
+    #CSVS file has headings
+    csvheader = next(csvreader)
     
-    #read through each row of data after the header
-    for row in csv_reader:
-        print(row)
+    #Track totals
+    for row in csvreader:
+        total_months = total_months + 1
+        months.append(row[0])
+        revenue = int(row[1])
+        total_revenue = total_revenue + revenue
+        if total_months > 1:
+            revenue_change = revenue - last_revenue
+            revenue_changes.append(revenue_change)
+        last_revenue = revenue
+
+#cacluations for month to month
+    max_change = max(revenue_changes)
+    min_change = min(revenue_changes)
+    sum_revenue_changes = sum(revenue_changes)
+    average_change = round(sum_revenue_changes / (total_months - 1),2)
+    max_month_value = revenue_changes.index(max_change)
+    min_month_value = revenue_changes.index(min_change)
+    max_month = months[max_month_value + 1]
+    min_month = months[min_month_value + 1]
+# print summary
+
+    print("Financial Analysis")
+    print("---------------------------")
+    print(f"Total Months: {total_months}")
+    print("Total: $" + str(total_revenue))
+    print(f"Average Change: ${average_change}")
+    print(f"Greatest Increase in Profits: {max_month} (${max_change})")
+    print(f"Greatest Decrease in Profits: {min_month} (${min_change})")
