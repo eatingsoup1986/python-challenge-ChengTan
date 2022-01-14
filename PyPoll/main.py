@@ -1,70 +1,64 @@
 import os
 import csv
 
-#path to collect the data
-pypoll_csv = os.path.join("Resources", "election_data.csv")
+# set a csv file path for the data
+pypoll_csv = os.path.join('Resources', 'election_data.csv')
 
 
-#track variables and parameters
-total_votes = 0
-candidate_votes = {}
-candidate_list = []
-max_count = 0
-max_candidate_vote = ""
+# define variables
+totalvotes = 0
+votes = []
+candidatecount = []
+candidates = []
+percent = []
 
-#read in the CSV file
 with open(pypoll_csv, 'r') as csvfile:
     #split data with commas
     csvreader = csv.reader(csvfile, delimiter=',')
     #CSVS file has headings
     csvheader = next(csvreader)
-    
-    #Track total overall
+
+# start loop of row
     for row in csvreader:
-        total_votes = total_votes + 1
-    #Track total for individual candiates
-        candidate_name = row[2]
+    # count the total votes
+        totalvotes += 1
+    # append candidate names to a candidates list
+        if row[2] not in candidates:
+            candidates.append(row[2])
+    # list all of the votes
+        votes.append(row[2])
 
-        if candidate_name not in candidate_list:
-            candidate_list.append(candidate_name)
-            candidate_votes[candidate_name] = 0
-        
-        candidate_votes[candidate_name] = candidate_votes[candidate_name] + 1           
+# second loop to add to candidate count with each vote
+    for candidate in candidates:
+        candidatecount.append(votes.count(candidate))
+        percent.append(round(votes.count(candidate)/totalvotes*100,3))
 
-#cacluations for the votes
-    for candidate in candidate_votes:
-        votes = candidate_votes.get(candidate)
-        percentage_vote = float(votes) / float(total_votes) * 100
-
-
-        if (votes > max_count):
-            max_count = votes
-            max_candidate_vote = candidate
-
-# print summary to terminal
-
-    print("Election Results")
-    print("---------------------------")
-    print(f"Total Votes: {total_votes}")
-    print("---------------------------")
-    print(f"Candidate Votes: {candidate}: {percentage_vote:.3f}% ({votes})")
-    print("---------------------------")
-    print(f"Winner: {max_candidate_vote}")
+# find the winner using index position of the max count in candidate count
+    winner = candidates[candidatecount.index(max(candidatecount))]
+    
+# print results, use a loop for individual candidates
+print('Election Results')
+print('--------------------------------')
+print(f'Total Votes: {totalvotes}')
+print('--------------------------------')
+for i in range(len(candidates)):
+    print(f'{candidates[i]}: {percent[i]}% ({candidatecount[i]})')
+print('--------------------------------')
+print(f'Winner: {winner}')
+print('--------------------------------')
 
 # save summary output to txt file
-# reference for future instructions: 
-# https://www.pythontutorial.net/python-basics/python-write-text-file/
-#save_file = pypoll_csv.strip(".csv") + "_analysis.txt"
-#filepath = os.path.join(".", save_file)
-#with open(filepath,'w') as f:
-#    f.write("Election Results" + '\n')
-#    f.write("---------------------------" + '\n')
-#    f.write(f"Total Votes: {total_votes}" + '\n')
-#    f.write("---------------------------" + '\n')
-#    f.write("Khan: " + str(kahn_vote) + '\n')
-#    f.write("Correy: " + str(correy_vote) + '\n')
-#    f.write("Li: " + str(li_vote) + '\n')
-#    f.write("O'Tooley: " + str(otool_vote) + '\n')
-#    f.write("---------------------------" + '\n')
-#    f.write(f"Winner: {max_candidate_vote}" + '\n')
+
+save_file = pypoll_csv.strip(".csv") + "_analysis.txt"
+filepath = os.path.join(".", save_file)
     
+with open(filepath,'w') as f:
+    f.write('Election Results')
+    f.write('\n------------------------------------')
+    f.write(f'\nTotal Votes: {totalvotes}')
+    f.write('\n------------------------------------')
+    for i in range (len(candidates)):
+        f.write(f'\n{candidates[i]}: {percent[i]}% {candidatecount[i]}')
+    f.write('\n------------------------------------')
+    f.write(f'\nWinner: {winner}')
+    f.write('\n------------------------------------')
